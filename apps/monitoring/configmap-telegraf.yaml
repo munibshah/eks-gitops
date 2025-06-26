@@ -12,7 +12,7 @@ metadata:
 data:
   telegraf.conf: |
     [agent]
-      interval = "10s"
+      interval = "5s"
       round_interval = true
       omit_hostname = false
 
