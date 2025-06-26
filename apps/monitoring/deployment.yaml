@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegraf-prometheus
+  namespace: default
+  labels:
+    app: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitoring
+  template:
+    metadata:
+      labels:
+        app: monitoring
+    spec:
+      containers:
+        - name: telegraf
+          image: telegraf:1.29-alpine
+          ports:
+            - containerPort: 9273
+          command:
+            - telegraf
+            - "--config"
+            - "/etc/telegraf/telegraf.conf"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/telegraf
+        - name: prometheus
+          image: prom/prometheus:v2.52.0
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-config
+              mountPath: /etc/prometheus/
+      volumes:
+        - name: config
+          configMap:
+            name: telegraf-config
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config

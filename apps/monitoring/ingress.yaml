@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-remote-write-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: telegraf-prometheus-ui
+                port:
+                  number: 9090
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: telegraf-prometheus-ui
+                port:
+                  number: 9273
+          - path: /api/v1/write
+            pathType: Prefix
+            backend:
+              service:
+                name: telegraf-prometheus-ui
+                port:
+                  number: 9273
